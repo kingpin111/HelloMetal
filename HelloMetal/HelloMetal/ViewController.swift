@@ -12,6 +12,13 @@ import UIKit
 class ViewController: UIViewController {
     var device: MTLDevice! //초기화 구문이 아닌 viewDidLoad에서 초기화할 것이므로 Optional 선언, 하지만 명백히 초기화 될 것이므로 implicitly unrapped optional로 선언하여 사용 편의성 제공
     
+    let vertexData:[Float] = [
+    0.0, 1.0, 0.0,
+    -1.0, -1.0, 0.0,
+    1.0, -1.0, 0.0]
+    
+    var vertexBuffer:MTLBuffer!
+    
     var metalLayer: CAMetalLayer!
     
     override func viewDidLoad() {
@@ -26,6 +33,9 @@ class ViewController: UIViewController {
         metalLayer.framebufferOnly = true // 뭔가 건드리면 퍼포먼스가 떨어지는 느낌인데 정확히 감이 안오네..
         metalLayer.frame = view.layer.frame
         view.layer.addSublayer(metalLayer)
+        
+        let dataSize = vertexData.count * MemoryLayout.size(ofValue: vertexData[0]) // get vertex data in bytes.
+        vertexBuffer = device.makeBuffer(bytes: vertexData, length: dataSize, options: []) // GPU 버퍼 생성
     }
 }
 
