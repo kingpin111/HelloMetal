@@ -25,6 +25,8 @@ class ViewController: UIViewController {
     
     var commandQueue:MTLCommandQueue!
     
+    var timer:CADisplayLink!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         device = MTLCreateSystemDefaultDevice()
@@ -53,6 +55,19 @@ class ViewController: UIViewController {
         pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
         
         commandQueue = device.makeCommandQueue()
+        
+        timer = CADisplayLink(target: self, selector: #selector(ViewController.gameloop))
+        timer.add(to: RunLoop.main, forMode: RunLoopMode.defaultRunLoopMode)
+    }
+    
+    func render() {
+        // TODO
+    }
+    
+    @objc func gameloop() {
+        autoreleasepool {
+            self.render()
+        }
     }
 }
 
