@@ -21,6 +21,8 @@ class ViewController: UIViewController {
     
     var metalLayer: CAMetalLayer!
     
+    var pipelineState:MTLRenderPipelineState!
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         device = MTLCreateSystemDefaultDevice()
@@ -36,6 +38,17 @@ class ViewController: UIViewController {
         
         let dataSize = vertexData.count * MemoryLayout.size(ofValue: vertexData[0]) // get vertex data in bytes.
         vertexBuffer = device.makeBuffer(bytes: vertexData, length: dataSize, options: []) // GPU 버퍼 생성
+        
+        let defaultLibrary = device.makeDefaultLibrary()! // newDefaultLibrary() -> makeDefaultLibrary()
+        let fragmentProgram = defaultLibrary.makeFunction(name: "basic_fragment")
+        let vertexProgram = defaultLibrary.makeFunction(name: "basic_vertex")
+        
+        let pipelineStateDescriptor = MTLRenderPipelineDescriptor()
+        pipelineStateDescriptor.vertexFunction = vertexProgram
+        pipelineStateDescriptor.fragmentFunction = fragmentProgram
+        pipelineStateDescriptor.colorAttachments[0].pixelFormat = .bgra8Unorm
+        
+        pipelineState = try! device.makeRenderPipelineState(descriptor: pipelineStateDescriptor)
     }
 }
 
